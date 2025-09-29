@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+<form method="POST" action="{{ url_for('add') }}">
+    <div class="mb-3">
+        <input type="text" class ="form-control" name="machine_id" placeholder="id">
+        <input type="text" class ="form-control" name="machine_type" placeholder="Machine Type">
+        <button type="submit" class="btn btn-sm btn-success">Add</button>
+    </div>
+</form>
+{% endblock %}

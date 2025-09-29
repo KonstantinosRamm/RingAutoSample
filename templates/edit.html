@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+
+
+    <!-- All machines -->
+    <form method="POST" action="{{ url_for('edit') }}">
+        <table class="rounded table table-striped table-hover table-bordered table-danger">
+            <thead class="table-dark"> 
+                <tr>
+                    <th>Machine name</th>
+                    <th>Last sample</th>
+                    <th>Nec</th>
+                    <th>Last date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for machine in machines %}
+                <tr>
+                    <td>{{ machine.machine_name }}-{{ machine.id }}</td>
+                    <td><input type="text" name="last_number_{{ machine.id }}" value="{{ machine.last_number or ''}}"></td>
+                    <td><input type="text" name="nec_{{machine.id}}" value="{{ machine.Nec or '' }}"></td>
+                    <td><input type="date" name="last_date_{{ machine.id }}" value="{{ machine.last_date or '' }}"></td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan="4" class="text-center">
+                        <button type="submit" class="btn btn-sm btn-success">Submit</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+
+    <div class ="d-flex justify-content-center mb-3">
+        <a href="{{ url_for('add') }}" class="btn btn-success me-2 btn-black-border">Add</a>
+        <a href="{{ url_for('delete') }}" class="btn btn-danger me-2 btn-black-border">Delete</a>
+    </div>
+
+{% endblock %}
+

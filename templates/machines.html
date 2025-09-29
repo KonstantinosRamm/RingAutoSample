@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+
+
+
+
+{% block content %}
+    <form method="POST" action="{{ url_for('machines') }}">
+        <table class="rounded table table-striped table-hover table-bordered table-info">
+            <thead class="table-dark"> 
+                <tr>
+                    <th>Machine name</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!--Show all machines and activate or deactivate them individually-->
+                {% for machine in all_machines %}
+                <tr>
+                    <td>{{ machine.machine_name }}-{{ machine.id }}</td>
+                    <td>
+                        {% if machine.is_active %}
+                            <button type="submit" name="status_change" class="btn btn-success" value = "{{ machine.id }}">on</button>
+                        {% else %}
+                            <button type="submit" name="status_change" class="btn btn-danger" value = "{{ machine.id }}">off</button>
+                            
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </form>
+{% endblock %}

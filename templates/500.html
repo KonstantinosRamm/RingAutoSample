@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block buttons %}
+<!-- Hide buttons on error page -->
+{% endblock %}
+
+{% block content %}
+<style>
+#tic_tac_toe_table {
+  border-collapse: collapse;
+}
+
+#tic_tac_toe_table td {
+  padding: 0;
+}
+
+#tic_tac_toe_table button {
+  width: 100px;           /* σταθερό πλάτος */
+  aspect-ratio: 1 / 1;    /* τετράγωνο */
+  font-size: 2rem;
+  cursor: pointer;
+  border: 1px solid black;
+  background-color: #82bb9a;
+}
+</style>
+
+<div class="d-flex justify-content-center align-items-center vh-100">
+  <table id="tic_tac_toe_table" class="m-0">
+    <tr>
+      <td><button></button></td>
+      <td><button></button></td>
+      <td><button></button></td>
+    </tr>
+    <tr>
+      <td><button></button></td>
+      <td><button></button></td>
+      <td><button></button></td>
+    </tr>
+    <tr>
+      <td><button></button></td>
+      <td><button></button></td>
+      <td><button></button></td>
+    </tr>
+  </table>
+</div>
+{% endblock %}
+
+{% block error %}
+<!-- Link JS logic -->
+<script src="{{ url_for('static', filename='js/tic_tac_toe.js') }}"></script>
+{% endblock %}

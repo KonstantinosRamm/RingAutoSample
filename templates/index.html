@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+    <!--Manual edit page-->
+    {% block navigation %}
+
+    {% endblock %}
+
+{% block content %}
+
+
+    <!-- Recommended machines -->
+    <form method="POST" action="{{ url_for('index') }}">
+        <table class="rounded table table-striped table-hover table-bordered table-secondary">
+            <thead class="table-dark">
+                <tr>
+                    <th colspan="2">Recommended</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!--Use slice to prevent case where 1 or no machines available-->
+                {% for machine in machines[:2] %}
+                <tr>
+                    <td>{{ machine.machine_name }}-{{ machine.id }}</td>
+                    <td>
+                        <input type="checkbox" name="selected_machines" value="{{ machine.id }}">
+                    </td>
+                </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan="2" class="text-center">
+                        <button type="submit" class="btn btn-sm btn-success">Submit</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+
+    <!-- All machines that are active-->
+    <form method="POST" action="{{ url_for('index') }}">
+        <table class="rounded table table-striped table-hover table-bordered table-success">
+            <thead class="table-dark"> 
+                <tr>
+                    <th>Machine name</th>
+                    <th>Last sample</th>
+                    <th>Last date</th>
+                    <th>Nec</th>
+                    <th>Select</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for machine in machines %}
+                    {% if machine.is_active %}
+                    <tr>
+                        <td>{{ machine.machine_name }}-{{ machine.id }}</td>
+                        <td>{{ machine.last_number or "" }}</td>
+                        <td>{{ machine.last_date or "" }}</td>
+                        <td>{{ machine.Nec or "" }}</td>
+                        <td>
+                            <input type="checkbox" name="selected_machines" value="{{ machine.id }}">
+                        </td>
+                    </tr>
+                    {% endif %}
+                {% endfor %}
+                <tr>
+                    <td colspan="5" class="text-center">
+                        <button type="submit" class="btn btn-sm btn-success">Submit</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+{% endblock %}
+
