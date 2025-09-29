@@ -2,7 +2,7 @@
 
 Follow these steps to set up the project locally.
 
-# 1. Install Python 3 (Linux example)
+# 1. Install Python 3 (Linux)
 ```bash
 sudo apt update
 sudo apt install python3 python3-venv python3-pip -y
@@ -37,6 +37,6 @@ pip install -r requirements.txt
 
 # 6. Run the project
 ```bash
-python main.py
+flask run
 ```
 
