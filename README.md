@@ -36,7 +36,9 @@ pip install -r requirements.txt
 ```
 
 # 6. Run the project
+
 ```bash
+source venv/bin/activate
 flask run
 ```
 
