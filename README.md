@@ -2,31 +2,29 @@
 
 Follow these steps to set up the project locally.
 
-### 1. Install Python 3
-
-Make sure you have Python 3 installed on your system.
-
-- **Linux (Debian/Ubuntu):**
 ```bash
+# 1. Install Python 3 (Linux example)
 sudo apt update
 sudo apt install python3 python3-venv python3-pip -y
 
+# 2. Verify installation
+python3 --version
+pip3 --version
 
-### 2. Create venv
-
-```bash
+# 3. Create a virtual environment
 python3 -m venv venv
 
-### 3. source virtual environment
+# 4. Activate the virtual environment
+source venv/bin/activate  # Linux/macOS
+# OR
+venv\Scripts\Activate.ps1  # Windows PowerShell
+# OR
+venv\Scripts\activate.bat  # Windows CMD
 
-```bash
-source venv/bin/activate
-
-### 4. install dependencies
+# 5. Install project dependencies
 pip install -r requirements.txt
 
-### 5. run the project
-```bash
-flask run 
+# 6. Run the project
+python main.py
 
 
