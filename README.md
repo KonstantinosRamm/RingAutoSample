@@ -42,3 +42,10 @@ source venv/bin/activate
 flask run
 ```
 
+
+
+# TODO 
+
+ADD MACHINES MANUALLY WITHOUT HARDCODED MACHINE TYPES AND NUMBERS
+
+
