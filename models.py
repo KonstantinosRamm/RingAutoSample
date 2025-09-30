@@ -5,12 +5,12 @@ db=SQLAlchemy()
 #machine model
 class Machine(db.Model):
     __tablename__ = 'machines'
-    #id typiko
+    #id (number of machine)
     id = db.Column(db.Integer, primary_key=True, autoincrement = False, unique = True)
     machine_name = db.Column(db.String, nullable=False)
-    #teleutaios arithmos kathe mhxanhs
+    #last number
     last_number = db.Column(db.String)
-    #hmeromhnia
+    #last date
     last_date = db.Column(db.Date)
     """
     NEC Index in Textiles
@@ -28,4 +28,16 @@ class Machine(db.Model):
         self.last_number = last_number
         self.machine_name = machine_name
         self.Nec = Nec
+
+#machine types
+class Type(db.Model):
+    __tablename__ = 'types'
+    id = db.Column(db.Integer, primary_key=True, autoincrement = True)
+    type = db.Column(db.String,unique=True)
+    spindle_numbers = db.Column(db.Integer)
+
+    def __init__(self,type : str ,spindle_numbers: int):
+        self.type = type
+        self.spindle_numbers = spindle_numbers
+
         
