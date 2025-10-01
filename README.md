@@ -17,6 +17,41 @@ This project provides a **digital tool** to streamline the workflow, combining b
 
 ---
 
+## ⚠️ Disclaimer & Table Customization
+
+The sampling tables included in this project are specific to our factory setup. 
+The total spindles, block distribution, and sample positions may vary in other factories, 
+even for the same machine model (e.g., Rieter G30, G35, G8).
+
+All sampling patterns and procedures follow the **Uster Standards**, ensuring proper 
+representation and consistency of yarn quality measurements.
+
+### How the Table Keys Work
+- Each key in the machine table represents a **block of 12 samples**, e.g., "13-24".
+- The keys are designed to form a **cyclic mapping** of samples:
+  - To find the samples for a given key, the system uses the **first two numbers of the previous block**.
+  - For the **first key** in the table, the system uses the **first two numbers of the last key** to start the cycle.
+- This ensures that all sample numbers for a machine can be accessed in sequence, **without errors**, even if the table is traversed in a loop.
+
+### How to Add or Modify Machine Tables
+1. Open `machines.py`.
+2. Add a new dictionary for the machine model, following the existing format:
+   ```python
+   NEW_MACHINE = {
+       "n-(n+11)": [1,13,...],
+       "1-13": [sample_numbers...],
+       ...
+       "n-(n+11)": [sample_numbers]
+   }
+3. Add the new machine to `machine_dictionary`
+    ```python
+    machine_dictionary = {
+      "previews_machine" : previous_machine,
+      "NEW_MACHINE" : NEW_MACHINE
+    }
+
+---
+
 ## 🎯 Motivation
 The tool was created to solve real operational pain at work:  
 - Manual tracking was **time-consuming**  

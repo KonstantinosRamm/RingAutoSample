@@ -77,28 +77,6 @@ G38 = {
 }
 
 
-
-machine_type = {
-    1 : "G38",
-    2 : "G38",
-    3 : "G38",
-    4 : "G38",
-    10: "G5",
-    11: "G5",
-    12: "G30",
-    13: "G30",
-    14: "G30",
-    15: "G30",
-    16: "G30",
-    17: "G30",
-    18: "G30",
-    19: "G30",
-    20: "G30",
-    21: "G30"
-}
-
-
-
 #ola ta dict mazi organomena se dict
 machine_dictionary = {
     "G30":G30,
@@ -109,9 +87,8 @@ machine_dictionary = {
 
 
 #get correct indexes
-def get_next_numbers(machine_id: int,last_number : str) -> list:
-    machine_id = int(machine_id)
-    selected_machine = machine_dictionary[machine_type[machine_id]] 
+def get_next_numbers(machine: str,last_number : str) -> list:
+    selected_machine = machine_dictionary[machine]
     result = []
     #if last number is not initialized yet then return the first samples on the table
     if last_number == "" or not last_number or last_number not in selected_machine:

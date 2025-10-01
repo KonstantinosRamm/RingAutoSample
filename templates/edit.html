@@ -21,7 +21,7 @@
                     <td>{{ machine.machine_name }}-{{ machine.id }}</td>
                     <td><input type="text" name="last_number_{{ machine.id }}" value="{{ machine.last_number or ''}}"></td>
                     <td><input type="text" name="nec_{{machine.id}}" value="{{ machine.Nec or '' }}"></td>
-                    <td><input type="date" name="last_date_{{ machine.id }}" value="{{ machine.last_date or '' }}"></td>
+                    <td><input type="date" name="last_date_{{ machine.id }}" value="{{ machine.last_date or '' }}" required></td>
                 </tr>
                 {% endfor %}
                 <tr>

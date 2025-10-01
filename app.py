@@ -1,16 +1,27 @@
 from flask import Flask,redirect,url_for,render_template,session,request,flash
 from datetime import date,datetime
-from models import db,Machine,Type
+from models import db,Machine
 from machines import *
 import secrets
 
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = secrets.token_hex(32)
+
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 #connect database to current app
 db.init_app(app)
+
+
+#---------------------------------
+#       CREATE DB 
+#---------------------------------
+
+with app.app_context():
+    db.create_all()  # create tables if not exist
+    db.session.commit()
+
 
 
 #---------------------------------
@@ -28,7 +39,7 @@ def index():
         selected_machines = list(map(int,selected_machines))
         for machine in machines:
             if machine.id in selected_machines:
-                numbers = get_next_numbers(machine.id,machine.last_number)
+                numbers = get_next_numbers(machine.machine_name,machine.last_number)
                 machine.last_number = f"{numbers[0]}-{numbers[1]}"#update number
                 machine.last_date = date.today()
         #commit to database
@@ -109,8 +120,6 @@ def machines():
 #---------------------------------
 @app.route('/add',methods=['POST','GET'])
 def add():
-    # load all available machine types for the dropdown menu
-    types = [t.type for t in Type.query.all()]
     if request.method == 'POST':
         id = request.form.get('machine_id')
         #check if id already in database or if valid
@@ -124,6 +133,8 @@ def add():
             return redirect(url_for('add'))
         
         machine_name = request.form.get('machine_type')
+        if not machine_name:
+            flash()
             #check if all fields filled
         if not machine_name or machine_name == '':
             flash('machine type must be filled','danger')
@@ -133,7 +144,7 @@ def add():
             db.session.add(new_machine)
             db.session.commit()
             flash('machine added','success')       
-    return render_template('add.html', types=types)
+    return render_template('add.html')
 
 
 #---------------------------------
