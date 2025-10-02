@@ -120,6 +120,7 @@ def machines():
 #---------------------------------
 @app.route('/add',methods=['POST','GET'])
 def add():
+    
     if request.method == 'POST':
         id = request.form.get('machine_id')
         #check if id already in database or if valid

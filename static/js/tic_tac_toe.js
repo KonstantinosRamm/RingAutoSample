@@ -2,108 +2,206 @@
 // Read all buttons from table
 const buttons = document.querySelectorAll('#tic_tac_toe_table button');
 
-// Create 2D board array
+//players turn 
+let turn = 'X';
+// slice the array into a matrix
 const board = [
   Array.from(buttons).slice(0, 3),
   Array.from(buttons).slice(3, 6),
   Array.from(buttons).slice(6, 9)
 ];
 
-let turn = 'X'; // Player starts
-
-// Check winner: returns 'X', 'O', or null
-function checkWinner(board) {
-  for (let i = 0; i < 3; i++) {
-    // Rows
-    if (
-      board[i][0].textContent &&
-      board[i][0].textContent === board[i][1].textContent &&
-      board[i][1].textContent === board[i][2].textContent
-    ) return board[i][0].textContent;
-
-    // Columns
-    if (
-      board[0][i].textContent &&
-      board[0][i].textContent === board[1][i].textContent &&
-      board[1][i].textContent === board[2][i].textContent
-    ) return board[0][i].textContent;
-  }
-
-  // Main diagonal
-  if (
-    board[0][0].textContent &&
-    board[0][0].textContent === board[1][1].textContent &&
-    board[1][1].textContent === board[2][2].textContent
-  ) return board[0][0].textContent;
-
-  // Anti-diagonal
-  if (
-    board[0][2].textContent &&
-    board[0][2].textContent === board[1][1].textContent &&
-    board[1][1].textContent === board[2][0].textContent
-  ) return board[0][2].textContent;
-
-  return null; // nobody won
+//get clean state board
+function getBoardState(){
+  return board.map(row => row.map(cell => cell.textContent));
 }
 
-// Handle winner or tie
-function handleWinnerOrTie() {
-  const winner = checkWinner(board);
-
-  if (winner === 'X') {
-    window.location.href = "/"; // Player wins → redirect
-    return true;
-  } else if (winner === 'O') {
-    console.log("AI wins! Restarting game...");
-    setTimeout(resetBoard, 1000); // AI wins → restart
-    return true;
+//check for winner
+function checkWinnerState(state){
+  for (let i = 0; i < 3; i++){
+    //vertical win
+    if (state[0][i] === state[1][i] && state [1][i] === state[2][i] && state[0][i] !== ''){
+      return state[0][i];
+    }
+    //horizontal win
+    if (state[i][0] === state[i][1] && state [i][1] === state[i][2] && state[i][0] !== ''){
+      return state[i][0];
+    }
+  }
+    //diagonals
+  if (state[0][0] === state[1][1] && state[1][1] === state[2][2] && state[0][0] !== ''){
+    return state[0][0];
+  }
+  //reverse diagonals
+  if (state[2][0] === state[1][1] && state[1][1] === state[0][2] && state[2][0] !== ''){
+    return state[2][0];
   }
 
-  // Check for tie
-  const allFilled = Array.from(buttons).every(b => b.textContent !== '');
-  if (allFilled) {
-    console.log("It's a tie! Restarting game...");
-    setTimeout(resetBoard, 1000); // tie → restart
-    return true;
-  }
-
-  return false; // Game continues
+  //nobody wins yet
+  return null;
 }
 
-// Player move
-function playerMove(button) {
-  if (button.textContent === '' && turn === 'X') {
-    button.textContent = 'X';
+//check for tie
+function checkTie(state){
+  //check if not empty cells left and nobody is winning
+  return (state.every(row => row.every(cell => cell !== '')) && checkWinnerState(state) == null);
+}
 
-    if (handleWinnerOrTie()) return; // Check winner/tie
+//minimax for ai logic
+function minimax(state,depth,isMaximizing){
+  let winner = checkWinnerState(state);
+  //base cases
 
-    turn = 'O';
-    setTimeout(aiMove, 500); // AI plays after 0.5s
+  //player is winning
+  if (winner === 'X'){ return 10 - depth};
+  //ai is winning
+  if (winner === 'O'){ return depth - 10};
+  //tie
+  if (checkTie(state)){ return 0;}
+
+  //maximizing branch
+  if (isMaximizing){
+    let best = -Infinity;
+    //check all possible permutations
+    for (let i = 0; i < 3; i++){
+      for (let j = 0; j < 3; j++){
+        if (state[i][j] === ''){
+          state[i][j] = 'X';
+          let score = minimax(state,depth+1,false);
+          best = Math.max(best,score);
+          //undo
+          state[i][j] = '';
+        }
+      }
+    }
+    return best;
+  }
+  //minimizing branch
+  else{
+    let best = Infinity;
+    //check all possible permutations
+    for (let i = 0; i < 3; i++){
+      for (let j = 0; j < 3; j++){
+        if (state[i][j] === ''){
+          state[i][j] = 'O';
+          let score = minimax(state,depth+1,true);
+          best = Math.min(best,score);
+          //undo
+          state[i][j] = '';
+        }
+      }
+    }
+
+    return best;
   }
 }
 
-// AI move (random)
-function aiMove() {
-  const emptyButtons = Array.from(buttons).filter(b => b.textContent === '');
-  if (emptyButtons.length === 0) return;
+//implement minimax to ai
+function aiCorrectMove(state){
 
-  const move = emptyButtons[Math.floor(Math.random() * emptyButtons.length)];
-  move.textContent = 'O';
-  console.log('AI plays');
+  //ai is minimizing so:
+  let bestScore = Infinity;
+  let move = {i: -1, j: -1};
 
-  if (handleWinnerOrTie()) return; // Check winner/tie
+  //check all cells and pick the best option
+  for (let i = 0; i < 3; i++){
+    for (let j = 0; j < 3; j++){
+      if (state[i][j] === ''){
+        //try the current cell
+        state[i][j] = 'O';
+        let score = minimax(state, 0, true);
+        //undo move
+        state[i][j] = '';
+        //ai is minimizing 
+        if (score < bestScore){
+          bestScore = score;
+          move = {i, j};
+        }
+      }
+    }
+  }
+  //apply the move to the board
+  if (move.i !== -1 && move.j !== -1) {
+    board[move.i][move.j].textContent = 'O';
+  }
+}
 
+//random move for ai
+function aiRandomMove(state){
+  // find empty cells
+  const emptyCells = [];
+  for (let i = 0; i < 3; i++){
+    for (let j = 0; j < 3; j++){
+      if (state[i][j] === ''){
+        emptyCells.push({i,j});
+      }
+    }
+  }
+  // no empty cells → do nothing
+  if (emptyCells.length === 0) return;
+  // pick a random empty cell
+  const move = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+  // update the board 
+  board[move.i][move.j].textContent = 'O';
+}
+
+
+function aiMove(state){
+  //make move based on difficulty
+  const difficulty = 60;
+  if (Math.random() * 100 < difficulty){
+    aiCorrectMove(state)
+  }
+  else{
+    aiRandomMove(state)
+  }
+}
+
+
+function resetBoard(){
+  buttons.forEach(button => button.textContent = '');
   turn = 'X';
 }
 
-// Reset board for new game
-function resetBoard() {
-  buttons.forEach(b => b.textContent = '');
-  turn = 'X';
-}
 
-// Add click listener to all buttons
+
 buttons.forEach(button => {
-  button.addEventListener('click', () => playerMove(button));
+  button.addEventListener('click', () => {
+    if (button.textContent === '' && turn === 'X') {
+      button.textContent = 'X';
+      turn = 'O'; // now it's AI's turn
+
+      let state = getBoardState();
+
+      if (checkWinnerState(state) === 'X') {
+        alert('Player wins!');
+        resetBoard();
+        return;
+      }
+      if (checkTie(state)) {
+        alert('Tie!');
+        resetBoard();
+        return;
+      }
+
+      setTimeout(() => {
+        aiMove(state); // AI makes its move
+
+        state = getBoardState(); // update after AI move
+
+        if (checkWinnerState(state) === 'O') {
+          alert('AI wins!');
+          resetBoard();
+        } else if (checkTie(state)) {
+          alert('Tie!');
+          resetBoard();
+        } else {
+          turn = 'X'; // back to player
+        }
+      }, 100);
+    }
+  });
 });
+
+
 
