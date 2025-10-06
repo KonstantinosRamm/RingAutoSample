@@ -32,6 +32,8 @@ with app.app_context():
 def index():
     #make a query to get all machines
     machines = Machine.query.filter_by(is_active=True).order_by(Machine.last_date).all()
+    #all numbers of each machine
+    all_machines = None
     if request.method == 'POST':
         selected_machines = request.form.getlist('selected_machines')
         
@@ -42,8 +44,12 @@ def index():
                 numbers = get_next_numbers(machine.machine_name,machine.last_number)
                 machine.last_number = f"{numbers[0]}-{numbers[1]}"#update number
                 machine.last_date = date.today()
+
         #commit to database
         db.session.commit()
+
+         
+
         #sort again
         machines.sort(key=lambda m: m.last_date)
     return render_template('index.html', machines = machines)
@@ -144,7 +150,12 @@ def add():
             new_machine = Machine(machine_name=machine_name,id=int(id),last_number="",last_date=datetime.today())
             db.session.add(new_machine)
             db.session.commit()
-            flash('machine added','success')       
+            flash('machine added','success')  
+        # --- Check if valid machine type ---
+        if machine_name not in machine_dictionary:
+            flash(f'"{machine_name}" is not a valid machine type', 'danger')
+            return redirect(url_for('add'))
+     
     return render_template('add.html')
 
 

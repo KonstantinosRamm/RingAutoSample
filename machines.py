@@ -102,6 +102,7 @@ def get_next_numbers(machine: str,last_number : str) -> list:
 
 
 
+
         
 
 

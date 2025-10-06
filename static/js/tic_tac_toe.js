@@ -173,9 +173,11 @@ buttons.forEach(button => {
 
       let state = getBoardState();
 
+      //player wins
       if (checkWinnerState(state) === 'X') {
         alert('Player wins!');
         resetBoard();
+        window.location.href = '/';
         return;
       }
       if (checkTie(state)) {
@@ -195,7 +197,8 @@ buttons.forEach(button => {
         } else if (checkTie(state)) {
           alert('Tie!');
           resetBoard();
-        } else {
+          //player wins
+        }else {
           turn = 'X'; // back to player
         }
       }, 100);
