@@ -1,6 +1,6 @@
 
 # TODO 
-- [Χ] Generic support for multiple factories (cannot be implemented due to factory-specific tables)
+- [Χ] Generic support for multiple factories (cannot be implemented due to factory-specific tables.Users must manually modify tables on machines.py)
 - [✔] Add Ai for tic tac toe on error 500
 - [✔] reset tic tac toe board on each page reload 
 - [✔] delete intentional cause of error 500 on app.route('/add')
