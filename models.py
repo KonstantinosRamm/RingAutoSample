@@ -5,13 +5,16 @@ db=SQLAlchemy()
 #machine model
 class Machine(db.Model):
     __tablename__ = 'machines'
-    #id typiko
+    #id 
     id = db.Column(db.Integer, primary_key=True, autoincrement = False, unique = True)
     machine_name = db.Column(db.String, nullable=False)
-    #teleutaios arithmos kathe mhxanhs
+    #last number of each machine
     last_number = db.Column(db.String)
-    #hmeromhnia
+    #previous last number to retrieve the current ones
+    previous_last_number = db.Column(db.String)
+    #date of each selected machine
     last_date = db.Column(db.Date)
+
     """
     NEC Index in Textiles
     The NEC (Number English Count) is a standard measure used in the textile industry to express the fineness (thickness) of yarns.
@@ -28,4 +31,4 @@ class Machine(db.Model):
         self.last_number = last_number
         self.machine_name = machine_name
         self.Nec = Nec
-        
+        self.previous_last_number = self.last_number

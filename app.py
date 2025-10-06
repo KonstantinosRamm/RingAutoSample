@@ -32,8 +32,6 @@ with app.app_context():
 def index():
     #make a query to get all machines
     machines = Machine.query.filter_by(is_active=True).order_by(Machine.last_date).all()
-    #all numbers of each machine
-    all_machines = None
     if request.method == 'POST':
         selected_machines = request.form.getlist('selected_machines')
         
@@ -42,6 +40,8 @@ def index():
         for machine in machines:
             if machine.id in selected_machines:
                 numbers = get_next_numbers(machine.machine_name,machine.last_number)
+                #update previous last numbers so we can retrieve current numbers
+                machine.previous_last_number = machine.last_number
                 machine.last_number = f"{numbers[0]}-{numbers[1]}"#update number
                 machine.last_date = date.today()
 
@@ -141,7 +141,8 @@ def add():
         
         machine_name = request.form.get('machine_type')
         if not machine_name:
-            flash()
+            flash('Machine type must be filled', 'danger')
+            return redirect(url_for('add'))
             #check if all fields filled
         if not machine_name or machine_name == '':
             flash('machine type must be filled','danger')
@@ -156,7 +157,7 @@ def add():
             flash(f'"{machine_name}" is not a valid machine type', 'danger')
             return redirect(url_for('add'))
      
-    return render_template('add.html')
+    return render_template('add.html',machines_dictionary = machine_dictionary)
 
 
 #---------------------------------
@@ -176,6 +177,29 @@ def delete():
     db.session.commit()
     machines = Machine.query.order_by(Machine.id).all()
     return render_template('delete.html', machines=machines)
+
+
+
+#--------------------------------------
+#             ALL NUMBERS 
+#--------------------------------------
+@app.route('/numbers',methods = ['POST','GET'])
+def numbers():
+    machines = Machine.query.filter_by(is_active=True).order_by(Machine.last_date).all()
+    all_numbers = []
+
+    #print all current numbers of available machines
+    for machine in machines:
+        #full name of the machine consisting of type + id e.g. G30-1 , G38-2 , G34-10 ... 
+        name = machine.machine_name + '-' + str(machine.id)
+        #append machine name to list
+        numbers = [name]
+        #append the correct numbers 
+        numbers += get_next_numbers(machine.machine_name,machine.previous_last_number)
+        all_numbers.append(numbers)
+    return render_template('numbers.html', all_numbers = all_numbers)
+
+
 
 #---------------------------------
 #           HANDLE ERROR 500
