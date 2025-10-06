@@ -37,11 +37,12 @@ All sampling patterns and procedures follow the **Uster Standards**, ensuring pr
 representation and consistency of yarn quality measurements.
 
 ### How the Table Keys Work
-- Each key in the machine table represents a **block of 12 samples**, e.g., "13-24".
-- The keys are designed to form a **cyclic mapping** of samples:
-  - To find the samples for a given key, the system uses the **first two numbers of the previous block**.
-  - For the **first key** in the table, the system uses the **first two numbers of the last key** to start the cycle.
-- This ensures that all sample numbers for a machine can be accessed in sequence, **without errors**, even if the table is traversed in a loop.
+- Each key in the machine table represents a **block of 12 samples**, e.g., "13-24".  
+- The keys form a **cyclic mapping** of samples:  
+  - To find the samples for a given key, the system uses the **first two numbers of the previous block**, e.g., "1-12". If invalid numbers are provided, sampling starts from the first number.  
+  - For the **first key**, the system uses the **first two numbers of the last key** to start the cycle.  
+- This ensures that all sample numbers for a machine can be accessed in sequence **without errors**, even when the table loops.
+
 
 ### How to Add or Modify Machine Tables
 1. Open `machines.py`.
