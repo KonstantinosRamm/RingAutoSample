@@ -3,7 +3,17 @@
 ## 📌 Overview
 In the textile industry, daily quality control requires sampling from **ring spinning machines**. Each machine may have up to **1200 spindles**, but only **48 specific samples** must be selected in sequence. Traditionally, this process is tracked manually in notebooks, which often caused **time delays** and **human errors**.
 
-This project provides a **digital tool** to streamline the workflow, combining backend logic with a frontend dashboard.
+This project provides a **digital tool** to streamline the workflow, combining backend logic with a frontend dashboard. It supports **CRUD operations**—you can **create, read, update, and delete** machine entries—making machine management fast and reliable.
+
+
+---
+## 🔗 Routes
+- `/` → Main page for sample selection and dashboard.  
+- `/edit` → Modify existing machines (last samples, date picked, nominal count of the yarn).  
+- `/delete` → Delete an existing machine.  
+- `/add` → Add a new machine.  
+- `/machines` → View all available machines and switch them on or off.  
+- `/numbers` → View all machine samples for each block.  
 
 ---
 
