@@ -7,7 +7,7 @@ import secrets
 
 
 app = Flask(__name__)
-#register api blueprint
+#register REST API blueprint
 app.register_blueprint(api, url_prefix='/api')
 app.config['SECRET_KEY'] = secrets.token_hex(32)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
