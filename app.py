@@ -2,12 +2,14 @@ from flask import Flask,redirect,url_for,render_template,session,request,flash
 from datetime import date,datetime
 from models import db,Machine
 from machines import *
+from API.api import api
 import secrets
 
 
 app = Flask(__name__)
+#register api blueprint
+app.register_blueprint(api, url_prefix='/api')
 app.config['SECRET_KEY'] = secrets.token_hex(32)
-
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 #connect database to current app

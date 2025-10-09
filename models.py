@@ -32,3 +32,15 @@ class Machine(db.Model):
         self.machine_name = machine_name
         self.Nec = Nec
         self.previous_last_number = self.last_number
+
+    #helper function to create json object
+    def to_dict(self):
+        return {
+            "id" : self.id,
+            "machine_name" : self.machine_name,
+            "last date" : self.last_date,
+            "last number" : self.last_number,
+            "nec" : self.Nec,
+            "active" : self.is_active
+        }
+
