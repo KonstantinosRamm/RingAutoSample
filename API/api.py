@@ -1,6 +1,8 @@
-from flask import Blueprint,jsonify
+from flask import Blueprint,jsonify,request
 from app import db
 from models import Machine
+from datetime import datetime
+from machines import machine_dictionary
 
 
 api = Blueprint("api",__name__)
@@ -53,5 +55,53 @@ def delete(id : str):
     db.session.commit()
     return jsonify({'status' : f'Machine {id} deleted'}), 200 #status code ok
 #------------------------------
-#        CREATE-POST
+#        POST
 #------------------------------
+@api.route('/machines', methods=['POST'])
+def add():
+    #read json file 
+
+    new_machine = request.get_json(silent=True)#set silent to true so we inform user in case of wrong data format
+
+    if new_machine is None:
+        return jsonify({'error' : 'You have to enter the machine in a json format'}), 400 #bad request
+    
+    #check if id and machine type available
+    #id-machine_name
+    required_fields = ['id','machine_name']
+    missing_fields = [f for f in required_fields if f not in new_machine]
+
+    #return error to user if any of the fields missing
+    if missing_fields:
+        return jsonify({'error' : f'you have to enter all fields {missing_fields}'})
+    
+    #check if values of each key is the correct type
+    if not isinstance(new_machine.get('id'),int):
+        return jsonify({'error' : 'id should be an int'}),400 # bad request
+    if not isinstance(new_machine.get('machine_name'),str):
+        return jsonify({'error' : 'machine_name should be a string'}),400 # bad request
+    
+
+    #read the entries of the json into variables
+    machine_id = new_machine['id']
+    
+
+    #check if machine in machine dictionary
+    machine_name = new_machine['machine_name']
+
+    if machine_name not in machine_dictionary:
+        return jsonify({'error' : 'Machine type-name is not registered'}),400 #bad request
+
+    #check for the given id if already in db 
+    existent_machine = Machine.query.get(machine_id)
+    if existent_machine:
+        return jsonify({'error' : f'machine id: {machine_id} already exists'}),409 #conflict
+    
+    new_machine_to_add = Machine(machine_name=machine_name,id=machine_id,last_number="",last_date=datetime.today())
+
+    #add to db machine to db
+    db.session.add(new_machine_to_add)
+    db.session.commit()
+
+
+    return jsonify({'success' : f'machine {machine_name}-{machine_id} added'}), 200 #status code ok
