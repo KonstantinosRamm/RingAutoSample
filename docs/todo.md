@@ -6,4 +6,6 @@
 - [✔] delete intentional cause of error 500 on app.route('/add')
 - [✔] Add flashes to inform user if machine failed to be added
 - [✔] Add new route to show complete numbers of each machine
+- [✔]  Implement REST API
 - [ ] Wrap the program in docker
+
