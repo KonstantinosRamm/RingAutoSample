@@ -21,10 +21,18 @@ This project provides a **digital tool** to streamline the workflow, combining b
 - Tracks the last sampled numbers for each machine  
 - Automatically calculates the **next samples** in sequence  
 - Suggests the **next machine** to sample based on the oldest last sampling  
-- Allows **manual input/correction** when necessary  
+- Allows **manual input/correction** when necessary
+- REST API implemented in Flask
 > ⚡ Can you guess what happens if you cause an Error 500?  
 > Play it and find out… 😏🎮
 
+---
+## 🖥 REST API
+- `/machines`       GET     Get all machines 
+- `/machines/id`    GET     Get a specific machine
+- `/machines`       PATCH   Update one or more machines 
+- `/machines`       POST    Add a new machine 
+- `/machines/<id>`  DELETE  Delete a machine by ID 
 ---
 
 ## ⚠️ Disclaimer & Table Customization
