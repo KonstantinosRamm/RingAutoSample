@@ -56,7 +56,7 @@
 }
 ```
 
-**PATCH api/machines
+**PATCH api/machines**
 ```json
 >Client json
 [
@@ -69,6 +69,7 @@
     }
 ]
 ```
+
 >Server response
 ```json
 [
