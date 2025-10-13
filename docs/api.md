@@ -57,8 +57,8 @@
 ```
 
 **PATCH api/machines**
-```json
 >Client json
+```json
 [
     {"machine_id": 21,
      "is_active": false
