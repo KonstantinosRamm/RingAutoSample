@@ -7,5 +7,6 @@
 - [✔] Add flashes to inform user if machine failed to be added
 - [✔] Add new route to show complete numbers of each machine
 - [✔]  Implement REST API
+- [ ] Modify REST API endpoints for bulk CRUD operations
 - [ ] Wrap the program in docker
 
