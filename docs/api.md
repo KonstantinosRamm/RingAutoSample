@@ -1,4 +1,5 @@
 **GET /machines**
+>Server Response
 ```json
 [
     {
@@ -22,6 +23,7 @@
 ```
 
 **GET /machines/<machine_id>**
+>Server Response
 ```json
 {
     "active": true,
