@@ -1,7 +1,7 @@
 from flask import Blueprint,jsonify,request
 from app import db
 from models import Machine
-from datetime import datetime
+from datetime import datetime,date
 from machines import machine_dictionary
 
 
@@ -38,10 +38,71 @@ def get_machine(id : str):
 
 
 #------------------------------
-#           UPDATE
+#         PATCH-UPDATE
 #------------------------------
+from datetime import datetime, date
+
+@api.route('/machines', methods=['PATCH'])
+def update():
+    # expected fields with types
+    machine_fields = {
+        "machine_name": str,
+        "last_number": str,
+        "previous_last_number": str,
+        "last_date": date,
+        "Nec": str,
+        "is_active": bool
+    }
+
+    result = []
+    data = request.get_json(silent=True)
+    if not data:
+        return jsonify([{'error': 'no valid machines provided'}]), 400
+
+    for machine in data:
+        machine_id = machine.get("machine_id")
+        if not isinstance(machine_id, int):
+            result.append({'error': f'machine_id {machine_id} should be an integer'})
+            continue
+
+        m = Machine.query.get(machine_id)
+        if not m:
+            result.append({'error': f'machine_id {machine_id} not found'})
+            continue
+
+        for field, expected_type in machine_fields.items():
+            if field in machine:
+                value = machine[field]
+
+                # type check and conversion for date
+                #correct format year-month-date
+                if expected_type == date:
+                    if isinstance(value, str):
+                        try:
+                            value = datetime.strptime(value, "%Y-%m-%d").date()
+                        except ValueError:
+                            result.append({'error': f"invalid date format for field '{field}' in machine {machine_id}"})
+                            continue
+                    elif not isinstance(value, date):
+                        result.append({'error': f"field '{field}' must be a date for machine {machine_id}"})
+                        continue
+
+                # type check for bool and str
+                elif not isinstance(value, expected_type):
+                    result.append({'error': f"field '{field}' must be {expected_type.__name__} for machine {machine_id}"})
+                    continue
+
+                setattr(m, field, value)
+                result.append({'success': f"field '{field}' updated in machine {machine_id}"})
+
+    db.session.commit()
+
+    status_code = 200 if any('success' in r for r in result) else 400
+    return jsonify(result), status_code
 
 
+        
+    
 #------------------------------
 #           DELETE
 #------------------------------
@@ -54,6 +115,8 @@ def delete(id : str):
     db.session.delete(machine)
     db.session.commit()
     return jsonify({'status' : f'Machine {id} deleted'}), 200 #status code ok
+
+
 #------------------------------
 #        POST
 #------------------------------
@@ -61,7 +124,7 @@ def delete(id : str):
 def add():
     #read json file 
 
-    new_machine = request.get_json(silent=True)#set silent to true so we inform user in case of wrong data format
+    new_machine = request.get_json(silent=True)#set silent to true so we do not  inform user in case of wrong data format
 
     if new_machine is None:
         return jsonify({'error' : 'You have to enter the machine in a json format'}), 400 #bad request
