@@ -32,7 +32,9 @@ This project provides a **digital tool** to streamline the workflow, combining b
 - `/machines/id`    GET     Get a specific machine
 - `/machines`       PATCH   Update one or more machines 
 - `/machines`       POST    Add a new machine 
-- `/machines/<id>`  DELETE  Delete a machine by ID 
+- `/machines/<id>`  DELETE  Delete a machine by ID
+> All API endpoints accept and return data in **JSON format**.
+
 ---
 
 ## ⚠️ Disclaimer & Table Customization
