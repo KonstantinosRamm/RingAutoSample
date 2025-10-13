@@ -40,7 +40,7 @@
 {
     "status": "Machine <machine_id> deleted"
 }
-```json
+```
 
 
 
