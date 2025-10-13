@@ -1,3 +1,15 @@
+> ⚠️ Note
+>
+> The REST API is designed to **validate all incoming JSON data**. 
+> If a request contains invalid fields, missing required values, or wrong types, 
+> the server will respond with an **error in JSON format**, explaining what went wrong. 
+> This ensures that clients always receive structured feedback for corrections.
+>
+> Currently, the **PATCH `/machines` endpoint** is the only endpoint that accepts **multiple machines at once** (an array of objects). 
+> All other endpoints (`POST`, `DELETE`, etc.) currently accept **only a single object** per request. 
+> This may change in future updates to support bulk operations.
+
+
 **GET api/machines**
 >Server Response
 ```json
