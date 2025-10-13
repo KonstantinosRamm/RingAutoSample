@@ -1,4 +1,4 @@
-**GET /machines **
+**GET /machines**
 ```json
 [
     {
@@ -21,7 +21,7 @@
 ]
 ```
 
-**GET /machines/<machine_id> **
+**GET /machines/<machine_id>**
 ```json
 {
     "active": true,
