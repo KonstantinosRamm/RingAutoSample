@@ -1,4 +1,4 @@
-**GET /machines**
+**GET api/machines**
 >Server Response
 ```json
 [
@@ -22,7 +22,7 @@
 ]
 ```
 
-**GET /machines/<machine_id>**
+**GET api/machines/<machine_id>**
 >Server Response
 ```json
 {
@@ -34,6 +34,14 @@
     "nec": "3022_CO"
 }
 ```
+**DELETE api/machines/<machine_id>**
+>Server Response
+```json
+{
+    "status": "Machine <machine_id> deleted"
+}
+```json
+
 
 
 
