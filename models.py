@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-
+from datetime import date
 db=SQLAlchemy()
 
 #machine model
@@ -25,10 +25,10 @@ class Machine(db.Model):
 
     #working machine 
     is_active = db.Column(db.Boolean, default=True)
-    def __init__(self,last_number,last_date,machine_name,id,Nec=""):
+    def __init__(self,last_number=None,last_date=None,machine_name=None,id=None,Nec=""):
         self.id = id
-        self.last_date = last_date
-        self.last_number = last_number
+        self.last_date = last_date if last_date else date.today()
+        self.last_number = last_number if last_number else "1-12"
         self.machine_name = machine_name
         self.Nec = Nec
         self.previous_last_number = self.last_number

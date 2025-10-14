@@ -40,7 +40,6 @@ def get_machine(id : str):
 #------------------------------
 #         PATCH-UPDATE
 #------------------------------
-from datetime import datetime, date
 
 @api.route('/machines', methods=['PATCH'])
 def update():
@@ -118,53 +117,90 @@ def delete(id : str):
 
 
 #------------------------------
-#        POST
+#           POST
 #------------------------------
 @api.route('/machines', methods=['POST'])
 def add():
-    #read json file 
+    from datetime import datetime, date
 
-    new_machine = request.get_json(silent=True)#set silent to true so we do not  inform user in case of wrong data format
+    # all fields and types
+    machine_fields = {
+        "machine_id": int,
+        "machine_name": str,
+        "last_number": str,
+        "previous_last_number": str,
+        "last_date": date,
+        "Nec": str,
+        "is_active": bool
+    }
 
-    if new_machine is None:
-        return jsonify({'error' : 'You have to enter the machine in a json format'}), 400 #bad request
-    
-    #check if id and machine type available
-    #id-machine_name
-    required_fields = ['id','machine_name']
-    missing_fields = [f for f in required_fields if f not in new_machine]
+    # required fields
+    required_fields = ["machine_id", "machine_name", "last_number", "last_date"]
 
-    #return error to user if any of the fields missing
-    if missing_fields:
-        return jsonify({'error' : f'you have to enter all fields {missing_fields}'})
-    
-    #check if values of each key is the correct type
-    if not isinstance(new_machine.get('id'),int):
-        return jsonify({'error' : 'id should be an int'}),400 # bad request
-    if not isinstance(new_machine.get('machine_name'),str):
-        return jsonify({'error' : 'machine_name should be a string'}),400 # bad request
-    
+    new_machines = request.get_json(silent=True)
+    if not new_machines:
+        return jsonify({'error': 'You have to enter the machines in a JSON format'}), 400
 
-    #read the entries of the json into variables
-    machine_id = new_machine['id']
-    
+    result = []
 
-    #check if machine in machine dictionary
-    machine_name = new_machine['machine_name']
+    for machine in new_machines:
+        # check nessecary fields
+        missing_fields = [f for f in required_fields if f not in machine or machine[f] is None]
+        if missing_fields:
+            result.append({'error': f"missing required fields: {', '.join(missing_fields)}"})
+            continue
+        # check machine_name exists in machines_dictionary
+        if machine["machine_name"] not in machine_dictionary:
+            result.append({'error': f"machine_name '{machine['machine_name']}' not found in machines_dictionary"})
+            continue
 
-    if machine_name not in machine_dictionary:
-        return jsonify({'error' : 'Machine type-name is not registered'}),400 #bad request
+        # check if current id already exists
+        machine_id = machine["machine_id"]
+        m = Machine.query.get(machine_id)
+        if m:
+            result.append({'error': f"machine_id {machine_id} already exists"})
+            continue
 
-    #check for the given id if already in db 
-    existent_machine = Machine.query.get(machine_id)
-    if existent_machine:
-        return jsonify({'error' : f'machine id: {machine_id} already exists'}),409 #conflict
-    
-    new_machine_to_add = Machine(machine_name=machine_name,id=machine_id,last_number="",last_date=datetime.today())
+        # Create new machine
+        new_machine = Machine(id=machine_id)
 
-    #add to db machine to db
-    db.session.add(new_machine_to_add)
-    db.session.commit()
+        # fill all fields
+        for field, expected_type in machine_fields.items():
+            if field not in machine:
+                continue
 
+            value = machine[field]
 
-    return jsonify({'success' : f'machine {machine_name}-{machine_id} added'}), 200 #status code ok
+            # check if date format is correct
+            if expected_type == date:
+                if isinstance(value, str):
+                    try:
+                        value = datetime.strptime(value, "%Y-%m-%d").date()
+                    except ValueError:
+                        result.append({'error': f"invalid date format for field '{field}' in machine {machine_id}"})
+                        break
+                elif not isinstance(value, date):
+                    result.append({'error': f"field '{field}' must be a date in machine {machine_id}"})
+                    break
+
+            # Check for appropriate types in json file
+            elif not isinstance(value, expected_type):
+                result.append({'error': f"field '{field}' must be {expected_type.__name__} in machine {machine_id}"})
+                break
+
+            setattr(new_machine, field, value)
+        else:
+            # add to db
+            db.session.add(new_machine)
+            result.append({'success': f"machine '{new_machine.machine_name}' added"})
+
+    try:
+        db.session.commit()
+    except Exception as e:
+        db.session.rollback()
+        result.append({'error': str(e)})
+        return jsonify(result), 500
+
+    status_code = 200 if any('success' in r for r in result) else 400
+    return jsonify(result), status_code
+
