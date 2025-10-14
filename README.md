@@ -29,7 +29,6 @@ This project provides a **digital tool** to streamline the workflow, combining b
 ---
 ## 🖥 REST API
 - `/machines`       GET     Get all machines 
-- `/machines/id`    GET     Get a specific machine
 - `/machines`       PATCH   Update one or more machines 
 - `/machines`       POST    Add a new machine 
 - `/machines/<id>`  DELETE  Delete a machine by ID
